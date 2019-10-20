@@ -2,12 +2,15 @@ nodes = NodeSet;
 nodes.addNode([0,0,0])
 nodes.addNode([0,10,0])
 nodes.addNode([0,20,0])
-
 nodes.getCoords()
+
 elems = ElementSet;
 elems.addElement([1,2])
 elems.addElement([2,3])
 
+dofs = DofSpace;
+dofs.addRows(3)
+dofs.addType('u')
 
 nele = elems.elemCount();
 for iele = 1:nele

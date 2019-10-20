@@ -184,6 +184,7 @@ classdef DofSpace < handle
         self.dofspace(:, jtype) = [];
         % Delete type
         self.types(jtype) = [];
+        self.ntyp = self.ntyp - 1;
         % Renumber dofs
         self.renumberDofs()
       end
@@ -194,10 +195,11 @@ classdef DofSpace < handle
       if is_cell(dof_types)
         for i = 1:length(dof_types)
           % Delete column from dofspace
-          jtype = find(strcmp(self.types, dof_types{i}))
+          jtype = find(strcmp(self.types, dof_types{i}));
           self.dofspace(:, jtype) = [];
           % Delete type
           self.types(jtype) = [];
+          self.ntyp = self.ntyp - 1;
         end
         % Renumber dofs
         self.renumberDofs()
@@ -206,6 +208,10 @@ classdef DofSpace < handle
       else
         error(type_char_cell__)
       end
+    end
+
+    function ntyp = typeCount(self)
+      ntyp = self.ntyp;
     end
 
     %-------------------------------------------------------------------
@@ -218,10 +224,10 @@ classdef DofSpace < handle
           self.addDof(inod, dof_types{i})
         end
       elseif ischar(dof_types) && is_int(inod)
-        jtype = find(strcmp(self.types, dof_types))
+        jtype = find(strcmp(self.types, dof_types));
         if isnan(self.dofspace(inod, jtype))
-          self.ndof = self.ndof + 1
-          self.dofspace(inod, jtype) = self.ndof
+          self.ndof = self.ndof + 1;
+          self.dofspace(inod, jtype) = self.ndof;
         end
       end
     end
@@ -250,7 +256,8 @@ classdef DofSpace < handle
       % disp(obj.types)
       if nargin == 1
         for i = 1:obj.nrow
-          disp(i, obj.dofspace(i,:))
+          output = ['%i [',repmat('%i ', 1, obj.ntyp),'] \n'];
+          fprintf(output, i, obj.dofspace(i,:))
         end
       elseif nargin == 2
       end

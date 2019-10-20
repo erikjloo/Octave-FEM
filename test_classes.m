@@ -3,19 +3,19 @@ addpath utilities
 test = 'DofSpace';
 
 if strcmp(test,'DofSpace')
-
   dofs = DofSpace(1,'u');
   dofs.addRows(10);
   dofs.eraseRows([5, 6, 7, 8, 9, 10]);
   dofs.addRow();
-
+  
   dofs.addType('u');
   dofs.addTypes({'v', 'j', 'rotx', 'roty', 'rotz'});
   dofs.setType(3, 'w');
-  dofs.addDofs([0, 2, 4, 5], {'u', 'v', 'w', 'rotx'});
+  dofs.addDofs([1, 3, 5, 6], {'u', 'v', 'w', 'rotx'});
   disp(dofs)
-
+  
   dofs.eraseType('w');
+  disp('here')
   disp(dofs)
   dofs.eraseTypes({'rotx', 'roty', 'rotz'});
   disp(dofs)

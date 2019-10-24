@@ -52,7 +52,7 @@ classdef DofSpace < handle
 %    Private Methods:
 %      renumberDofs()
 
-  properties (Constant)
+  properties (Constant = true)
     type_int__ = "Input is not int!"
     type_str__ = "Input is not char!"
     type_int_vector__ = "Input is not int or vector!"
@@ -174,46 +174,11 @@ classdef DofSpace < handle
       end
     end
 
-    function dof_type = getTypeName(self, jtype)
-      % Input: jtype = dof type index
-      % Output: dof_type = string of dof name
-      if is_int(jtype)
-        dof_type = self.types{jtype};
-      else
-        error(self.type_int__)
-      end
-    end
-    
-    function dof_types = getTypeNames(self, jtypes)
-      % Input: jtypes = (vector of) dof type indices
-      % Output: dof_types = (cell array of) strings of dof names
-      if is_int_vector(jtypes)
-        dof_types = {};
-        for i = 1:numel(jtypes)
-          dof_types{i} = self.types{jtypes(i)};
-        end
-      elseif is_int(jtypes)
-        dof_types = self.types{jtypes};
-      else
-        error(self.type_int_vector__)
-      end
-    end
-
-    function jtype = findTypeIndex(self, dof_type)
-      % Input: dof_type = string of dof name
-      % Output: jtype = dof type index
-      if ischar(dof_type)
-        jtype = find(strcmp(self.types, dof_type));
-      else
-        error(self.type_str__)
-      end
-    end
-
     function eraseType(self, dof_type)
       % Input: dof_type = string of dof name to be erased
       if ischar(dof_type)
         % Delete column from dofspace
-        jtype = strcmp(self.types, dof_type);
+        jtype = find(strcmp(self.types, dof_type));
         self.dofspace(:, jtype) = [];
         % Delete type
         self.types(jtype) = [];
@@ -231,7 +196,7 @@ classdef DofSpace < handle
         for i = 1:numel(dof_types)
           if ischar(dof_types{i})
             % Delete column from dofspace
-            jtype = strcmp(self.types, dof_types{i});
+            jtype = find(strcmp(self.types, dof_types{i}));
             self.dofspace(:, jtype) = [];
             % Delete type
             self.types(jtype) = [];
@@ -254,7 +219,9 @@ classdef DofSpace < handle
       ntyp = self.ntyp;
     end
     
-
+    function dof_type = getTypeName(self, jtype)
+      
+    end
 
     %-------------------------------------------------------------------
     %   Dof Methods
@@ -267,7 +234,7 @@ classdef DofSpace < handle
           self.addDof(inod, dof_types{i})
         end
       elseif ischar(dof_types) && is_int(inod)
-        jtype = strcmp(self.types, dof_types);
+        jtype = find(strcmp(self.types, dof_types));
         if isnan(self.dofspace(inod, jtype))
           self.ndof = self.ndof + 1;
           self.dofspace(inod, jtype) = self.ndof;
@@ -332,41 +299,33 @@ classdef DofSpace < handle
 
     end
 
-  end
-    
     %-------------------------------------------------------------------
     %   Miscellaneous
     %-------------------------------------------------------------------
 
-  methods(Static)
     function disp(obj, rows)
-    % Input: rows = (vector of) row indices to be printed
-    % Prints dof space with (given) node number and dof names
-
+      % disp(obj.types)
       if nargin == 1
-        range = 1:obj.nrow;
+        for i = 1:obj.nrow
+          output = ['%i [',repmat('%i ', 1, obj.ntyp),'] \n'];
+          fprintf(output, i, obj.dofspace(i,:))
+        end
       elseif nargin == 2
-        range = rows; 
       end
 
-      header = ['  ',repmat('%6s ', 1, obj.ntyp),' \n'];
-      output = ['%i [',repmat('%6i ', 1, obj.ntyp),'] \n'];
-      fprintf(header,obj.types{:})
-      for i = range
-        fprintf(output, i, obj.dofspace(i,:))
-      end
     end
   end
   
-  methods (Access = private)   
+  methods (Access = private)
+    
     function renumberDofs(self)
       disp(self.renumber__)
-      self.ndof = 0;
+      self.ndof = 1;
       for i = 1:size(self.dofspace,1)
         for j = 1:size(self.dofspace,2)
           if ~isnan(self.dofspace(i, j))
-            self.ndof = self.ndof + 1;
             self.dofspace(i, j) = self.ndof;
+            self.ndof = self.ndof + 1;
           end
         end
       end

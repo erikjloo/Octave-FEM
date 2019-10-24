@@ -7,15 +7,17 @@ if strcmp(test,'DofSpace')
   dofs.addRows(10);
   dofs.eraseRows([5, 6, 7, 8, 9, 10]);
   dofs.addRow();
-  
+
   dofs.addType('u');
   dofs.addTypes({'v', 'j', 'rotx', 'roty', 'rotz'});
   dofs.setType(3, 'w');
+  disp(dofs.getTypeName(3))
+  disp(dofs.getTypeNames([3,5]))
+  disp(dofs.findTypeIndex('w'))
   dofs.addDofs([1, 3, 5, 6], {'u', 'v', 'w', 'rotx'});
   disp(dofs)
-  
+
   dofs.eraseType('w');
-  disp('here')
   disp(dofs)
   dofs.eraseTypes({'rotx', 'roty', 'rotz'});
   disp(dofs)
